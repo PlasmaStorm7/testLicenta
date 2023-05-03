@@ -1,0 +1,631 @@
+[1/14] Linking C static library esp-idf/spiffs/libspiffs.a
+[2/14] Linking C static library esp-idf/wifi_provisioning/libwifi_provisioning.a
+[3/14] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/main.c.obj
+[4/14] Building C object esp-idf/lora/CMakeFiles/__idf_lora.dir/lora.c.obj
+FAILED: esp-idf/lora/CMakeFiles/__idf_lora.dir/lora.c.obj 
+/home/razvan/.espressif/tools/riscv32-esp-elf/esp-2022r1-11.2.0/riscv32-esp-elf/bin/riscv32-esp-elf-gcc  -I/home/razvan/Coding/EspProjects/Licenta/testLicenta/build/config -I/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora -I/home/razvan/esp/esp-idf/components/newlib/platform_include -I/home/razvan/esp/esp-idf/components/freertos/FreeRTOS-Kernel/include -I/home/razvan/esp/esp-idf/components/freertos/esp_additions/include/freertos -I/home/razvan/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/include -I/home/razvan/esp/esp-idf/components/freertos/esp_additions/include -I/home/razvan/esp/esp-idf/components/esp_hw_support/include -I/home/razvan/esp/esp-idf/components/esp_hw_support/include/soc -I/home/razvan/esp/esp-idf/components/esp_hw_support/include/soc/esp32c3 -I/home/razvan/esp/esp-idf/components/esp_hw_support/port/esp32c3/. -I/home/razvan/esp/esp-idf/components/esp_hw_support/port/esp32c3/private_include -I/home/razvan/esp/esp-idf/components/heap/include -I/home/razvan/esp/esp-idf/components/log/include -I/home/razvan/esp/esp-idf/components/soc/include -I/home/razvan/esp/esp-idf/components/soc/esp32c3/. -I/home/razvan/esp/esp-idf/components/soc/esp32c3/include -I/home/razvan/esp/esp-idf/components/hal/esp32c3/include -I/home/razvan/esp/esp-idf/components/hal/include -I/home/razvan/esp/esp-idf/components/hal/platform_port/include -I/home/razvan/esp/esp-idf/components/esp_rom/include -I/home/razvan/esp/esp-idf/components/esp_rom/include/esp32c3 -I/home/razvan/esp/esp-idf/components/esp_rom/esp32c3 -I/home/razvan/esp/esp-idf/components/esp_common/include -I/home/razvan/esp/esp-idf/components/esp_system/include -I/home/razvan/esp/esp-idf/components/esp_system/port/soc -I/home/razvan/esp/esp-idf/components/esp_system/port/include/riscv -I/home/razvan/esp/esp-idf/components/esp_system/port/include/private -I/home/razvan/esp/esp-idf/components/riscv/include -I/home/razvan/esp/esp-idf/components/lwip/include -I/home/razvan/esp/esp-idf/components/lwip/include/apps -I/home/razvan/esp/esp-idf/components/lwip/include/apps/sntp -I/home/razvan/esp/esp-idf/components/lwip/lwip/src/include -I/home/razvan/esp/esp-idf/components/lwip/port/esp32/include -I/home/razvan/esp/esp-idf/components/lwip/port/esp32/include/arch -I/home/razvan/esp/esp-idf/components/driver/include -I/home/razvan/esp/esp-idf/components/driver/deprecated -I/home/razvan/esp/esp-idf/components/esp_pm/include -I/home/razvan/esp/esp-idf/components/esp_ringbuf/include -march=rv32imc  -fdiagnostics-color=always -ffunction-sections -fdata-sections -Wall -Werror=all -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=deprecated-declarations -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-enum-conversion -gdwarf-4 -ggdb -nostartfiles -Og -fmacro-prefix-map=/home/razvan/Coding/EspProjects/Licenta/testLicenta=. -fmacro-prefix-map=/home/razvan/esp/esp-idf=/IDF -fstrict-volatile-bitfields -Wno-error=unused-but-set-variable -fno-jump-tables -fno-tree-switch-conversion -DconfigENABLE_FREERTOS_DEBUG_OCDAWARE=1 -std=gnu17 -Wno-old-style-declaration -D_GNU_SOURCE -DIDF_VER=\"v5.0.1-dirty\" -DESP_PLATFORM -D_POSIX_READER_WRITER_LOCKS -MD -MT esp-idf/lora/CMakeFiles/__idf_lora.dir/lora.c.obj -MF esp-idf/lora/CMakeFiles/__idf_lora.dir/lora.c.obj.d -o esp-idf/lora/CMakeFiles/__idf_lora.dir/lora.c.obj -c /home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:6:20: error: redeclaration of enumerator 'FhssChangeChannel'
+    6 | enum DIO2modeEnum {FhssChangeChannel=0} DIO2mode;
+      |                    ^~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:5:32: note: previous definition of 'FhssChangeChannel' with type 'enum DIO1modeEnum'
+    5 | enum DIO1modeEnum {RxTimeout=0,FhssChangeChannel=1,CadDetected=2} DIO1mode;
+      |                                ^~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:7:20: error: redeclaration of enumerator 'CadDone'
+    7 | enum DIO3modeEnum {CadDone=0,ValidHeader=1;CrcError=2} DIO3mode;
+      |                    ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:4:38: note: previous definition of 'CadDone' with type 'enum DIO0modeEnum'
+    4 | enum DIO0modeEnum {RxDone=0,Txdone=1,CadDone=2} DIO0mode;
+      |                                      ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:7:43: error: expected ',' or '}' before ';' token
+    7 | enum DIO3modeEnum {CadDone=0,ValidHeader=1;CrcError=2} DIO3mode;
+      |                                           ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:8:20: error: redeclaration of enumerator 'CadDetected'
+    8 | enum DIO4modeEnum {CadDetected=0,PllLock=1} DIO4mode;
+      |                    ^~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:5:52: note: previous definition of 'CadDetected' with type 'enum DIO1modeEnum'
+    5 | enum DIO1modeEnum {RxTimeout=0,FhssChangeChannel=1,CadDetected=2} DIO1mode;
+      |                                                    ^~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'setDIO':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:12:4: error: implicit declaration of function 'lora_idle' [-Werror=implicit-function-declaration]
+   12 |    lora_idle();
+      |    ^~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:13:4: error: implicit declaration of function 'lora_write_reg' [-Werror=implicit-function-declaration]
+   13 |    lora_write_reg(REG_DIO_MAPPING_1,(DIO0mode<<6)|(DIO1mode<<4)|(DIO2mode<<2)|(DIO3mode));
+      |    ^~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:13:19: error: 'REG_DIO_MAPPING_1' undeclared (first use in this function)
+   13 |    lora_write_reg(REG_DIO_MAPPING_1,(DIO0mode<<6)|(DIO1mode<<4)|(DIO2mode<<2)|(DIO3mode));
+      |                   ^~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:13:19: note: each undeclared identifier is reported only once for each function it appears in
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:14:19: error: 'REG_DIO_MAPPING_2' undeclared (first use in this function)
+   14 |    lora_write_reg(REG_DIO_MAPPING_2,(DIO4mode<<6)|(DIO5mode));
+      |                   ^~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: At top level:
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:18:8: error: unknown type name 'spi_device_handle_t'
+   18 | static spi_device_handle_t __spi;
+      |        ^~~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:21:8: error: unknown type name 'bool'
+   21 | static bool RxDoneFlag;
+      |        ^~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:23:23: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'gpio_isr_handler'
+   23 | static void IRAM_ATTR gpio_isr_handler(void* arg)
+      |                       ^~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'resetRxDone':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:28:15: error: 'false' undeclared (first use in this function)
+   28 |    RxDoneFlag=false;
+      |               ^~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:1:1: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+  +++ |+#include <stdbool.h>
+    1 | 
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: At top level:
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:31:1: error: unknown type name 'bool'
+   31 | bool isRxDone(){
+      | ^~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:31:1: note: 'bool' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:42:27: error: unknown type name 'uint8_t'
+   42 | void lora_write_reg_burst(uint8_t reg,uint8_t *buffer,uint8_t length){
+      |                           ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:1:1: note: 'uint8_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+  +++ |+#include <stdint.h>
+    1 | 
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:42:39: error: unknown type name 'uint8_t'
+   42 | void lora_write_reg_burst(uint8_t reg,uint8_t *buffer,uint8_t length){
+      |                                       ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:42:39: note: 'uint8_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:42:55: error: unknown type name 'uint8_t'
+   42 | void lora_write_reg_burst(uint8_t reg,uint8_t *buffer,uint8_t length){
+      |                                                       ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:42:55: note: 'uint8_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:76:6: warning: conflicting types for 'lora_write_reg'; have 'void(int,  int)'
+   76 | void lora_write_reg(int reg, int val)
+      |      ^~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:13:4: note: previous implicit declaration of 'lora_write_reg' with type 'void(int,  int)'
+   13 |    lora_write_reg(REG_DIO_MAPPING_1,(DIO0mode<<6)|(DIO1mode<<4)|(DIO2mode<<2)|(DIO3mode));
+      |    ^~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_write_reg':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:78:4: error: unknown type name 'uint8_t'
+   78 |    uint8_t out[2] = { 0x80 | reg, val };
+      |    ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:78:4: note: 'uint8_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:79:4: error: unknown type name 'uint8_t'
+   79 |    uint8_t in[2];
+      |    ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:79:4: note: 'uint8_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:81:4: error: unknown type name 'spi_transaction_t'
+   81 |    spi_transaction_t t = {
+      |    ^~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:82:7: error: field name not in record or union initializer
+   82 |       .flags = 0,
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:82:7: note: (near initialization for 't')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:83:7: error: field name not in record or union initializer
+   83 |       .length = 8 * sizeof(out),
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:83:7: note: (near initialization for 't')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:83:17: warning: excess elements in scalar initializer
+   83 |       .length = 8 * sizeof(out),
+      |                 ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:83:17: note: (near initialization for 't')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:84:7: error: field name not in record or union initializer
+   84 |       .tx_buffer = out,
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:84:7: note: (near initialization for 't')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:84:20: warning: excess elements in scalar initializer
+   84 |       .tx_buffer = out,
+      |                    ^~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:84:20: note: (near initialization for 't')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:85:7: error: field name not in record or union initializer
+   85 |       .rx_buffer = in
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:85:7: note: (near initialization for 't')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:85:20: warning: excess elements in scalar initializer
+   85 |       .rx_buffer = in
+      |                    ^~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:85:20: note: (near initialization for 't')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:89:7: error: implicit declaration of function 'spi_device_transmit' [-Werror=implicit-function-declaration]
+   89 |    if(spi_device_transmit(__spi, &t) != ESP_OK)
+      |       ^~~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:89:41: error: 'ESP_OK' undeclared (first use in this function)
+   89 |    if(spi_device_transmit(__spi, &t) != ESP_OK)
+      |                                         ^~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:91:17: error: implicit declaration of function 'printf' [-Werror=implicit-function-declaration]
+   91 |                 printf("SPI WRITE ERROR!\n");
+      |                 ^~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:1:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+  +++ |+#include <stdio.h>
+    1 | 
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:91:17: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   91 |                 printf("SPI WRITE ERROR!\n");
+      |                 ^~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:91:17: note: include '<stdio.h>' or provide a declaration of 'printf'
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_read_reg':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:104:4: error: unknown type name 'uint8_t'
+  104 |    uint8_t out[2] = { reg, 0xff };
+      |    ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:104:4: note: 'uint8_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:105:4: error: unknown type name 'uint8_t'
+  105 |    uint8_t in[2];
+      |    ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:105:4: note: 'uint8_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:107:4: error: unknown type name 'spi_transaction_t'
+  107 |    spi_transaction_t t = {
+      |    ^~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:108:7: error: field name not in record or union initializer
+  108 |       .flags = 0,
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:108:7: note: (near initialization for 't')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:109:7: error: field name not in record or union initializer
+  109 |       .length = 8 * sizeof(out),
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:109:7: note: (near initialization for 't')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:109:17: warning: excess elements in scalar initializer
+  109 |       .length = 8 * sizeof(out),
+      |                 ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:109:17: note: (near initialization for 't')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:110:7: error: field name not in record or union initializer
+  110 |       .tx_buffer = out,
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:110:7: note: (near initialization for 't')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:110:20: warning: excess elements in scalar initializer
+  110 |       .tx_buffer = out,
+      |                    ^~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:110:20: note: (near initialization for 't')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:111:7: error: field name not in record or union initializer
+  111 |       .rx_buffer = in
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:111:7: note: (near initialization for 't')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:111:20: warning: excess elements in scalar initializer
+  111 |       .rx_buffer = in
+      |                    ^~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:111:20: note: (near initialization for 't')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: At top level:
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:125:26: error: unknown type name 'uint8_t'
+  125 | void lora_read_reg_burst(uint8_t reg,uint8_t *buffer,uint8_t length)
+      |                          ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:125:26: note: 'uint8_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:125:38: error: unknown type name 'uint8_t'
+  125 | void lora_read_reg_burst(uint8_t reg,uint8_t *buffer,uint8_t length)
+      |                                      ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:125:38: note: 'uint8_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:125:54: error: unknown type name 'uint8_t'
+  125 | void lora_read_reg_burst(uint8_t reg,uint8_t *buffer,uint8_t length)
+      |                                                      ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:125:54: note: 'uint8_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_reset':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:147:4: error: implicit declaration of function 'gpio_set_level' [-Werror=implicit-function-declaration]
+  147 |    gpio_set_level(CONFIG_RST_GPIO, 0);
+      |    ^~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:147:19: error: 'CONFIG_RST_GPIO' undeclared (first use in this function)
+  147 |    gpio_set_level(CONFIG_RST_GPIO, 0);
+      |                   ^~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:148:4: error: implicit declaration of function 'vTaskDelay' [-Werror=implicit-function-declaration]
+  148 |    vTaskDelay(pdMS_TO_TICKS(1));
+      |    ^~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:148:15: error: implicit declaration of function 'pdMS_TO_TICKS' [-Werror=implicit-function-declaration]
+  148 |    vTaskDelay(pdMS_TO_TICKS(1));
+      |               ^~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_explicit_header_mode':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:160:19: error: 'REG_MODEM_CONFIG_1' undeclared (first use in this function)
+  160 |    lora_write_reg(REG_MODEM_CONFIG_1, lora_read_reg(REG_MODEM_CONFIG_1) & 0xfe);
+      |                   ^~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_implicit_header_mode':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:171:19: error: 'REG_MODEM_CONFIG_1' undeclared (first use in this function)
+  171 |    lora_write_reg(REG_MODEM_CONFIG_1, lora_read_reg(REG_MODEM_CONFIG_1) | 0x01);
+      |                   ^~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:172:19: error: 'REG_PAYLOAD_LENGTH' undeclared (first use in this function)
+  172 |    lora_write_reg(REG_PAYLOAD_LENGTH, size);
+      |                   ^~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: At top level:
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:179:6: warning: conflicting types for 'lora_idle'; have 'void(void)'
+  179 | void lora_idle(void)
+      |      ^~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:12:4: note: previous implicit declaration of 'lora_idle' with type 'void(void)'
+   12 |    lora_idle();
+      |    ^~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_idle':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:181:19: error: 'REG_OP_MODE' undeclared (first use in this function)
+  181 |    lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_STDBY);
+      |                   ^~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:181:32: error: 'MODE_LONG_RANGE_MODE' undeclared (first use in this function)
+  181 |    lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_STDBY);
+      |                                ^~~~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:181:55: error: 'MODE_STDBY' undeclared (first use in this function)
+  181 |    lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_STDBY);
+      |                                                       ^~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_sleep':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:190:19: error: 'REG_OP_MODE' undeclared (first use in this function)
+  190 |    lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_SLEEP);
+      |                   ^~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:190:32: error: 'MODE_LONG_RANGE_MODE' undeclared (first use in this function)
+  190 |    lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_SLEEP);
+      |                                ^~~~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:190:55: error: 'MODE_SLEEP' undeclared (first use in this function)
+  190 |    lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_SLEEP);
+      |                                                       ^~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_receive':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:199:19: error: 'REG_OP_MODE' undeclared (first use in this function)
+  199 |    lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
+      |                   ^~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:199:32: error: 'MODE_LONG_RANGE_MODE' undeclared (first use in this function)
+  199 |    lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
+      |                                ^~~~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:199:55: error: 'MODE_RX_CONTINUOUS' undeclared (first use in this function)
+  199 |    lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
+      |                                                       ^~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_transmit':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:207:16: error: 'REG_OP_MODE' undeclared (first use in this function)
+  207 | lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_TX);
+      |                ^~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:207:29: error: 'MODE_LONG_RANGE_MODE' undeclared (first use in this function)
+  207 | lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_TX);
+      |                             ^~~~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:207:52: error: 'MODE_TX' undeclared (first use in this function)
+  207 | lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_TX);
+      |                                                    ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_receive_single':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:216:19: error: 'REG_OP_MODE' undeclared (first use in this function)
+  216 |    lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE);
+      |                   ^~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:216:32: error: 'MODE_LONG_RANGE_MODE' undeclared (first use in this function)
+  216 |    lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE);
+      |                                ^~~~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:216:55: error: 'MODE_RX_SINGLE' undeclared (first use in this function)
+  216 |    lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE);
+      |                                                       ^~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_CAD':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:225:19: error: 'REG_OP_MODE' undeclared (first use in this function)
+  225 |    lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_CAD);
+      |                   ^~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:225:32: error: 'MODE_LONG_RANGE_MODE' undeclared (first use in this function)
+  225 |    lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_CAD);
+      |                                ^~~~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:225:55: error: 'MODE_CAD' undeclared (first use in this function)
+  225 |    lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_CAD);
+      |                                                       ^~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_set_tx_power':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:238:19: error: 'REG_PA_CONFIG' undeclared (first use in this function)
+  238 |    lora_write_reg(REG_PA_CONFIG, PA_BOOST | (level - 2));
+      |                   ^~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:238:34: error: 'PA_BOOST' undeclared (first use in this function)
+  238 |    lora_write_reg(REG_PA_CONFIG, PA_BOOST | (level - 2));
+      |                                  ^~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_set_frequency':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:250:4: error: unknown type name 'uint64_t'
+  250 |    uint64_t frf = ((uint64_t)frequency << 19) / 32000000;
+      |    ^~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:250:4: note: 'uint64_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:250:21: error: 'uint64_t' undeclared (first use in this function)
+  250 |    uint64_t frf = ((uint64_t)frequency << 19) / 32000000;
+      |                     ^~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:250:21: note: 'uint64_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:250:30: error: expected ')' before 'frequency'
+  250 |    uint64_t frf = ((uint64_t)frequency << 19) / 32000000;
+      |                   ~          ^~~~~~~~~
+      |                              )
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:252:19: error: 'REG_FRF_MSB' undeclared (first use in this function)
+  252 |    lora_write_reg(REG_FRF_MSB, (uint8_t)(frf >> 16));
+      |                   ^~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:252:33: error: 'uint8_t' undeclared (first use in this function)
+  252 |    lora_write_reg(REG_FRF_MSB, (uint8_t)(frf >> 16));
+      |                                 ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:252:33: note: 'uint8_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:253:19: error: 'REG_FRF_MID' undeclared (first use in this function)
+  253 |    lora_write_reg(REG_FRF_MID, (uint8_t)(frf >> 8));
+      |                   ^~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:254:19: error: 'REG_FRF_LSB' undeclared (first use in this function)
+  254 |    lora_write_reg(REG_FRF_LSB, (uint8_t)(frf >> 0));
+      |                   ^~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_set_spreading_factor':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:268:22: error: 'REG_DETECTION_OPTIMIZE' undeclared (first use in this function)
+  268 |       lora_write_reg(REG_DETECTION_OPTIMIZE, 0xc5);
+      |                      ^~~~~~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:269:22: error: 'REG_DETECTION_THRESHOLD' undeclared (first use in this function)
+  269 |       lora_write_reg(REG_DETECTION_THRESHOLD, 0x0c);
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:275:19: error: 'REG_MODEM_CONFIG_2' undeclared (first use in this function)
+  275 |    lora_write_reg(REG_MODEM_CONFIG_2, (lora_read_reg(REG_MODEM_CONFIG_2) & 0x0f) | ((sf << 4) & 0xf0));
+      |                   ^~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_set_bandwidth':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:297:19: error: 'REG_MODEM_CONFIG_1' undeclared (first use in this function)
+  297 |    lora_write_reg(REG_MODEM_CONFIG_1, (lora_read_reg(REG_MODEM_CONFIG_1) & 0x0f) | (bw << 4));
+      |                   ^~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_set_coding_rate':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:311:19: error: 'REG_MODEM_CONFIG_1' undeclared (first use in this function)
+  311 |    lora_write_reg(REG_MODEM_CONFIG_1, (lora_read_reg(REG_MODEM_CONFIG_1) & 0xf1) | (cr << 1));
+      |                   ^~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_set_preamble_length':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:321:19: error: 'REG_PREAMBLE_MSB' undeclared (first use in this function)
+  321 |    lora_write_reg(REG_PREAMBLE_MSB, (uint8_t)(length >> 8));
+      |                   ^~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:321:38: error: 'uint8_t' undeclared (first use in this function)
+  321 |    lora_write_reg(REG_PREAMBLE_MSB, (uint8_t)(length >> 8));
+      |                                      ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:321:38: note: 'uint8_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:322:19: error: 'REG_PREAMBLE_LSB' undeclared (first use in this function)
+  322 |    lora_write_reg(REG_PREAMBLE_LSB, (uint8_t)(length >> 0));
+      |                   ^~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_set_sync_word':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:332:19: error: 'REG_SYNC_WORD' undeclared (first use in this function)
+  332 |    lora_write_reg(REG_SYNC_WORD, sw);
+      |                   ^~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_enable_crc':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:341:19: error: 'REG_MODEM_CONFIG_2' undeclared (first use in this function)
+  341 |    lora_write_reg(REG_MODEM_CONFIG_2, lora_read_reg(REG_MODEM_CONFIG_2) | 0x04);
+      |                   ^~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_disable_crc':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:350:19: error: 'REG_MODEM_CONFIG_2' undeclared (first use in this function)
+  350 |    lora_write_reg(REG_MODEM_CONFIG_2, lora_read_reg(REG_MODEM_CONFIG_2) & 0xfb);
+      |                   ^~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_init':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:359:4: error: unknown type name 'esp_err_t'
+  359 |    esp_err_t ret;
+      |    ^~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:370:4: error: unknown type name 'gpio_config_t'
+  370 |    gpio_config_t io_conf = {};
+      |    ^~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:370:28: error: empty scalar initializer
+  370 |    gpio_config_t io_conf = {};
+      |                            ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:370:28: note: (near initialization for 'io_conf')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:372:11: error: request for member 'intr_type' in something not a structure or union
+  372 |    io_conf.intr_type = GPIO_INTR_DISABLE;
+      |           ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:372:24: error: 'GPIO_INTR_DISABLE' undeclared (first use in this function)
+  372 |    io_conf.intr_type = GPIO_INTR_DISABLE;
+      |                        ^~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:374:11: error: request for member 'mode' in something not a structure or union
+  374 |    io_conf.mode = GPIO_MODE_OUTPUT;
+      |           ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:374:19: error: 'GPIO_MODE_OUTPUT' undeclared (first use in this function)
+  374 |    io_conf.mode = GPIO_MODE_OUTPUT;
+      |                   ^~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:376:11: error: request for member 'pin_bit_mask' in something not a structure or union
+  376 |    io_conf.pin_bit_mask = GPIO_OUTPUT_PINMASK;//((1ULL<<CONFIG_RST_GPIO)|(1ULL<<CONFIG_CS_GPIO))
+      |           ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:376:27: error: 'GPIO_OUTPUT_PINMASK' undeclared (first use in this function)
+  376 |    io_conf.pin_bit_mask = GPIO_OUTPUT_PINMASK;//((1ULL<<CONFIG_RST_GPIO)|(1ULL<<CONFIG_CS_GPIO))
+      |                           ^~~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:378:11: error: request for member 'pull_down_en' in something not a structure or union
+  378 |    io_conf.pull_down_en = 0;
+      |           ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:379:11: error: request for member 'pull_up_en' in something not a structure or union
+  379 |    io_conf.pull_up_en = 0;
+      |           ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:381:4: error: implicit declaration of function 'gpio_config' [-Werror=implicit-function-declaration]
+  381 |    gpio_config(&io_conf);
+      |    ^~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:384:11: error: request for member 'intr_type' in something not a structure or union
+  384 |    io_conf.intr_type = GPIO_INTR_POSEDGE;
+      |           ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:384:24: error: 'GPIO_INTR_POSEDGE' undeclared (first use in this function)
+  384 |    io_conf.intr_type = GPIO_INTR_POSEDGE;
+      |                        ^~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:386:11: error: request for member 'pin_bit_mask' in something not a structure or union
+  386 |    io_conf.pin_bit_mask = GPIO_INPUT_PINMASK;//(1ULL<<CONFIG_DIO0_GPIO)
+      |           ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:386:27: error: 'GPIO_INPUT_PINMASK' undeclared (first use in this function)
+  386 |    io_conf.pin_bit_mask = GPIO_INPUT_PINMASK;//(1ULL<<CONFIG_DIO0_GPIO)
+      |                           ^~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:388:11: error: request for member 'mode' in something not a structure or union
+  388 |    io_conf.mode = GPIO_MODE_INPUT;
+      |           ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:388:19: error: 'GPIO_MODE_INPUT' undeclared (first use in this function)
+  388 |    io_conf.mode = GPIO_MODE_INPUT;
+      |                   ^~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:390:11: error: request for member 'pull_down_en' in something not a structure or union
+  390 |    io_conf.pull_down_en = 0;
+      |           ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:391:11: error: request for member 'pull_up_en' in something not a structure or union
+  391 |    io_conf.pull_up_en=0;
+      |           ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:395:4: error: implicit declaration of function 'gpio_install_isr_service' [-Werror=implicit-function-declaration]
+  395 |    gpio_install_isr_service(ESP_INTR_FLAG_DEFAULT);
+      |    ^~~~~~~~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:395:29: error: 'ESP_INTR_FLAG_DEFAULT' undeclared (first use in this function)
+  395 |    gpio_install_isr_service(ESP_INTR_FLAG_DEFAULT);
+      |                             ^~~~~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:397:4: error: implicit declaration of function 'gpio_isr_handler_add' [-Werror=implicit-function-declaration]
+  397 |    gpio_isr_handler_add(CONFIG_DIO0_GPIO, gpio_isr_handler, (void*) CONFIG_DIO0_GPIO);
+      |    ^~~~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:397:25: error: 'CONFIG_DIO0_GPIO' undeclared (first use in this function)
+  397 |    gpio_isr_handler_add(CONFIG_DIO0_GPIO, gpio_isr_handler, (void*) CONFIG_DIO0_GPIO);
+      |                         ^~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:397:43: error: 'gpio_isr_handler' undeclared (first use in this function)
+  397 |    gpio_isr_handler_add(CONFIG_DIO0_GPIO, gpio_isr_handler, (void*) CONFIG_DIO0_GPIO);
+      |                                           ^~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:402:4: error: unknown type name 'spi_bus_config_t'
+  402 |    spi_bus_config_t bus = {
+      |    ^~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:403:7: error: field name not in record or union initializer
+  403 |       .miso_io_num = CONFIG_MISO_GPIO,
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:403:7: note: (near initialization for 'bus')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:403:22: error: 'CONFIG_MISO_GPIO' undeclared (first use in this function)
+  403 |       .miso_io_num = CONFIG_MISO_GPIO,
+      |                      ^~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:404:7: error: field name not in record or union initializer
+  404 |       .mosi_io_num = CONFIG_MOSI_GPIO,
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:404:7: note: (near initialization for 'bus')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:404:22: error: 'CONFIG_MOSI_GPIO' undeclared (first use in this function)
+  404 |       .mosi_io_num = CONFIG_MOSI_GPIO,
+      |                      ^~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:404:22: warning: excess elements in scalar initializer
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:404:22: note: (near initialization for 'bus')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:405:7: error: field name not in record or union initializer
+  405 |       .sclk_io_num = CONFIG_SCK_GPIO,
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:405:7: note: (near initialization for 'bus')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:405:22: error: 'CONFIG_SCK_GPIO' undeclared (first use in this function)
+  405 |       .sclk_io_num = CONFIG_SCK_GPIO,
+      |                      ^~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:405:22: warning: excess elements in scalar initializer
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:405:22: note: (near initialization for 'bus')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:406:7: error: field name not in record or union initializer
+  406 |       .quadwp_io_num = -1,
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:406:7: note: (near initialization for 'bus')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:406:24: warning: excess elements in scalar initializer
+  406 |       .quadwp_io_num = -1,
+      |                        ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:406:24: note: (near initialization for 'bus')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:407:7: error: field name not in record or union initializer
+  407 |       .quadhd_io_num = -1,
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:407:7: note: (near initialization for 'bus')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:407:24: warning: excess elements in scalar initializer
+  407 |       .quadhd_io_num = -1,
+      |                        ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:407:24: note: (near initialization for 'bus')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:408:7: error: field name not in record or union initializer
+  408 |       .max_transfer_sz = 0
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:408:7: note: (near initialization for 'bus')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:408:26: warning: excess elements in scalar initializer
+  408 |       .max_transfer_sz = 0
+      |                          ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:408:26: note: (near initialization for 'bus')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:411:10: error: implicit declaration of function 'spi_bus_initialize' [-Werror=implicit-function-declaration]
+  411 |    ret = spi_bus_initialize(SPI2_HOST, &bus, 0);
+      |          ^~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:411:29: error: 'SPI2_HOST' undeclared (first use in this function)
+  411 |    ret = spi_bus_initialize(SPI2_HOST, &bus, 0);
+      |                             ^~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:412:4: error: implicit declaration of function 'assert' [-Werror=implicit-function-declaration]
+  412 |    assert(ret == ESP_OK);
+      |    ^~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:1:1: note: 'assert' is defined in header '<assert.h>'; did you forget to '#include <assert.h>'?
+  +++ |+#include <assert.h>
+    1 | 
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:412:18: error: 'ESP_OK' undeclared (first use in this function)
+  412 |    assert(ret == ESP_OK);
+      |                  ^~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:414:4: error: unknown type name 'spi_device_interface_config_t'
+  414 |    spi_device_interface_config_t dev = {
+      |    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:415:7: error: field name not in record or union initializer
+  415 |       .clock_speed_hz = 1000000,
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:415:7: note: (near initialization for 'dev')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:416:7: error: field name not in record or union initializer
+  416 |       .mode = 0,
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:416:7: note: (near initialization for 'dev')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:416:15: warning: excess elements in scalar initializer
+  416 |       .mode = 0,
+      |               ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:416:15: note: (near initialization for 'dev')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:417:7: error: field name not in record or union initializer
+  417 |       .spics_io_num = CONFIG_CS_GPIO,
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:417:7: note: (near initialization for 'dev')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:417:23: error: 'CONFIG_CS_GPIO' undeclared (first use in this function)
+  417 |       .spics_io_num = CONFIG_CS_GPIO,
+      |                       ^~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:417:23: warning: excess elements in scalar initializer
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:417:23: note: (near initialization for 'dev')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:418:7: error: field name not in record or union initializer
+  418 |       .queue_size = 1,
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:418:7: note: (near initialization for 'dev')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:418:21: warning: excess elements in scalar initializer
+  418 |       .queue_size = 1,
+      |                     ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:418:21: note: (near initialization for 'dev')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:419:7: error: field name not in record or union initializer
+  419 |       .flags = 0,
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:419:7: note: (near initialization for 'dev')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:419:16: warning: excess elements in scalar initializer
+  419 |       .flags = 0,
+      |                ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:419:16: note: (near initialization for 'dev')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:420:7: error: field name not in record or union initializer
+  420 |       .pre_cb = NULL
+      |       ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:420:7: note: (near initialization for 'dev')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:420:17: error: 'NULL' undeclared (first use in this function)
+  420 |       .pre_cb = NULL
+      |                 ^~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:1:1: note: 'NULL' is defined in header '<stddef.h>'; did you forget to '#include <stddef.h>'?
+  +++ |+#include <stddef.h>
+    1 | 
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:420:17: warning: excess elements in scalar initializer
+  420 |       .pre_cb = NULL
+      |                 ^~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:420:17: note: (near initialization for 'dev')
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:422:10: error: implicit declaration of function 'spi_bus_add_device' [-Werror=implicit-function-declaration]
+  422 |    ret = spi_bus_add_device(SPI2_HOST, &dev, &__spi);
+      |          ^~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:433:4: error: unknown type name 'uint8_t'
+  433 |    uint8_t version;
+      |    ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:433:4: note: 'uint8_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:434:4: error: unknown type name 'uint8_t'
+  434 |    uint8_t i = 0;
+      |    ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:434:4: note: 'uint8_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:435:16: error: 'TIMEOUT_RESET' undeclared (first use in this function)
+  435 |    while(i++ < TIMEOUT_RESET) {
+      |                ^~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:436:31: error: 'REG_VERSION' undeclared (first use in this function)
+  436 |       version = lora_read_reg(REG_VERSION);
+      |                               ^~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:446:19: error: 'REG_FIFO_RX_BASE_ADDR' undeclared (first use in this function)
+  446 |    lora_write_reg(REG_FIFO_RX_BASE_ADDR, 0);
+      |                   ^~~~~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:447:19: error: 'REG_FIFO_TX_BASE_ADDR' undeclared (first use in this function)
+  447 |    lora_write_reg(REG_FIFO_TX_BASE_ADDR, 0);
+      |                   ^~~~~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:448:19: error: 'REG_LNA' undeclared (first use in this function)
+  448 |    lora_write_reg(REG_LNA, lora_read_reg(REG_LNA) | 0x03);
+      |                   ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:449:19: error: 'REG_MODEM_CONFIG_3' undeclared (first use in this function)
+  449 |    lora_write_reg(REG_MODEM_CONFIG_3, 0x04);
+      |                   ^~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: At top level:
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:462:18: error: unknown type name 'uint8_t'
+  462 | lora_send_packet(uint8_t *buf, int size)
+      |                  ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:462:18: note: 'uint8_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:495:21: error: unknown type name 'uint8_t'
+  495 | lora_receive_packet(uint8_t *buf, int size)
+      |                     ^~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:495:21: note: 'uint8_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_received':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:531:21: error: 'REG_IRQ_FLAGS' undeclared (first use in this function)
+  531 |    if(lora_read_reg(REG_IRQ_FLAGS) & IRQ_RX_DONE_MASK) return 1;
+      |                     ^~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:531:38: error: 'IRQ_RX_DONE_MASK' undeclared (first use in this function)
+  531 |    if(lora_read_reg(REG_IRQ_FLAGS) & IRQ_RX_DONE_MASK) return 1;
+      |                                      ^~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_packet_rssi':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:541:26: error: 'REG_PKT_RSSI_VALUE' undeclared (first use in this function)
+  541 |    return (lora_read_reg(REG_PKT_RSSI_VALUE) - (__frequency < 860E6 ? 164 : 157));
+      |                          ^~~~~~~~~~~~~~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_packet_snr':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:550:13: error: 'int8_t' undeclared (first use in this function)
+  550 |    return ((int8_t)lora_read_reg(REG_PKT_SNR_VALUE)) * 0.25;
+      |             ^~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:550:13: note: 'int8_t' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:550:20: error: expected ')' before 'lora_read_reg'
+  550 |    return ((int8_t)lora_read_reg(REG_PKT_SNR_VALUE)) * 0.25;
+      |           ~        ^~~~~~~~~~~~~
+      |                    )
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_dump_registers':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:572:4: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+  572 |    printf("00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F\n");
+      |    ^~~~~~
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:572:4: note: include '<stdio.h>' or provide a declaration of 'printf'
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_packet_rssi':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:542:1: error: control reaches end of non-void function [-Werror=return-type]
+  542 | }
+      | ^
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c: In function 'lora_packet_snr':
+/home/razvan/Coding/EspProjects/Licenta/testLicenta/components/lora/lora.c:551:1: error: control reaches end of non-void function [-Werror=return-type]
+  551 | }
+      | ^
+cc1: some warnings being treated as errors
+[5/14] Performing build step for 'bootloader'
+[1/1] cd /home/razvan/Coding/EspProjects/Licenta/testLicenta/build/bootloader/esp-idf/esptool_py && /home/razvan/.espressif/python_env/idf5.0_py3.8_env/bin/python /home/razvan/esp/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x0 /home/razvan/Coding/EspProjects/Licenta/testLicenta/build/bootloader/bootloader.bin
+Bootloader binary size 0x4ee0 bytes. 0x3120 bytes (38%) free.
+ninja: build stopped: subcommand failed.

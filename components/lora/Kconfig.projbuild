@@ -1,0 +1,73 @@
+menu "LoRa Configuration"
+
+    config LORA_CS_GPIO
+        int "CS GPIO"
+        range 0 35
+        default 7
+        help
+            Pin Number where the NCS pin of the LoRa module is connected to.
+
+    config LORA_RST_GPIO
+        int "RST GPIO"
+        range 0 35
+        default 10
+        help
+            Pin Number where the NRST pin of the LoRa module is connected to.
+
+    config LORA_MISO_GPIO
+        int "MISO GPIO"
+        range 0 35
+        default 5
+        help
+            Pin Number to be used as the MISO SPI signal.
+
+    config LORA_MOSI_GPIO
+        int "MOSI GPIO"
+        range 0 35
+        default 6
+        help
+            Pin Number to be used as the MOSI SPI signal.
+
+    config LORA_SCK_GPIO
+        int "SCK GPIO"
+        range 0 35
+        default 4
+        help
+            Pin Number to be used as the SCK SPI signal.
+
+    config LORA_DIO0_GPIO
+        int "DIO0_GPIO"
+        range 0 35
+        default 1
+        help
+            Pin Number to be connected to DIO0 of the LoRa module
+
+    config LORA_DIO1_GPIO
+        int "DIO1_GPIO"
+        range 0 35
+        default 2
+        help
+            Pin Number to be connected to DIO1 of the LoRa module
+
+    config LORA_DIO2_GPIO
+        int "DIO2_GPIO"
+        range 0 35
+        default 3
+        help
+            Pin Number to be connected to DIO2 of the LoRa module
+
+    config LORA_DIO3_GPIO
+        int "DIO3_GPIO"
+        range 0 35
+        default 8
+        help
+            Pin Number to be connected to DIO3 of the LoRa module
+
+    config LORA_DIO4_GPIO
+        int "DIO4_GPIO"
+        range 0 35
+        default 9
+        help
+            Pin Number to be connected to DIO4 of the LoRa module
+
+endmenu
