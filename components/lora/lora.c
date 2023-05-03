@@ -6,7 +6,8 @@
 #include "soc/gpio_struct.h"
 #include "driver/gpio.h"
 #include <string.h>
-
+#include "lora.h"
+#include <stdbool.h>
 
 
 /*
@@ -86,32 +87,21 @@
 #define ESP_INTR_FLAG_DEFAULT 0
 
 
-//DIO mapping enums
-
-enum DIO0modeEnum {DIO0RxDone=0,DIO0Txdone=1,DIO0CadDone=2} DIO0mode;
-enum DIO1modeEnum {DIO1RxTimeout=0,DIO1Fhss=1,DIO1CadDetected=2} DIO1mode;
-enum DIO2modeEnum {DIO2Fhss=0} DIO2mode;
-enum DIO3modeEnum {DIO3CadDone=0,DIO3ValidHeader=1,DIO3CrcError=2} DIO3mode;
-enum DIO4modeEnum {DIO4CadDetected=0,PllLock=1} DIO4mode;
-enum DIO5modeEnum {DIO5ModeReady=0,DIO5ClkOut=1} DIO5mode; 
-
-
-
 static spi_device_handle_t __spi;
 static int __implicit;
 static long __frequency;
-static bool RxDoneFlag;
+static uint8_t RxDoneFlag;
 
 static void IRAM_ATTR DIO0_isr_handler(void* arg)
 {
-   RxDoneFlag=true;
+   RxDoneFlag=1;
 }
 
 void resetRxDone(){
-   RxDoneFlag=false;
+   RxDoneFlag=0;
 }
 
-bool isRxDone(){
+uint8_t isRxDone(){
    return RxDoneFlag;
 }
 
@@ -435,8 +425,8 @@ lora_disable_crc(void)
 /**
  * Perform hardware initialization.
  */
-int 
-lora_init(void)
+uint8_t 
+lora_init(int current_spi_host)
 {
    esp_err_t ret;
 
@@ -481,6 +471,7 @@ lora_init(void)
    /**
     * Configure SPI bus and device
     */
+   /*
    spi_bus_config_t bus = {
       .miso_io_num = CONFIG_LORA_MISO_GPIO,
       .mosi_io_num = CONFIG_LORA_MOSI_GPIO,
@@ -492,7 +483,8 @@ lora_init(void)
    
    ret = spi_bus_initialize(SPI2_HOST, &bus, 0);
    assert(ret == ESP_OK);
-
+   */
+  
    spi_device_interface_config_t dev = {
       .clock_speed_hz = 1000000,
       .mode = 0,
@@ -501,7 +493,7 @@ lora_init(void)
       .flags = 0,
       .pre_cb = NULL
    };
-   ret = spi_bus_add_device(SPI2_HOST, &dev, &__spi);
+   ret = spi_bus_add_device(current_spi_host, &dev, &__spi);
    assert(ret == ESP_OK);
 
    /*
@@ -516,7 +508,10 @@ lora_init(void)
    uint8_t i = 0;
    while(i++ < TIMEOUT_RESET) {
       version = lora_read_reg(REG_VERSION);
-      if(version == 0x12) break;
+      if(version == 0x12) {
+         printf("version good");
+         break;
+         }
       vTaskDelay(2);
    }
    assert(i <= TIMEOUT_RESET + 1); // at the end of the loop above, the max value i can reach is TIMEOUT_RESET + 1
