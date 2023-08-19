@@ -32,7 +32,7 @@ void lora_set_preamble_length(long length);
 void lora_set_sync_word(int sw);
 void lora_enable_crc(void);
 void lora_disable_crc(void);
-uint8_t lora_init(int current_spi_host);
+uint8_t lora_init();
 void lora_send_packet(uint8_t *buf, int size);
 int lora_receive_packet(uint8_t *buf, int size);
 int lora_received(void);

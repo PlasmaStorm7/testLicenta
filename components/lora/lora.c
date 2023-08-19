@@ -65,7 +65,7 @@
 /*
  * IRQ masks
  */
-#define IRQ_CAD_DETECTED               0x00
+#define IRQ_CAD_DETECTED               0x01
 #define IRQ_FHSS_CHANGE_CHANNEL        0x02
 #define IRQ_CAD_DONE                   0x04
 #define IRQ_TX_DONE_MASK               0x08
@@ -79,7 +79,8 @@
 #define PA_OUTPUT_RFO_PIN              0
 #define PA_OUTPUT_PA_BOOST_PIN         1
 
-#define TIMEOUT_RESET                  100
+#define TIMEOUT_RESET                  5
+#define BURST_MAX_LENGTH               255
 
 //GPIO prep
 #define GPIO_OUTPUT_PINMASK            ((1ULL<<CONFIG_LORA_RST_GPIO)|(1ULL<<CONFIG_LORA_CS_GPIO))
@@ -92,32 +93,20 @@ static int __implicit;
 static long __frequency;
 static uint8_t RxDoneFlag;
 
-static void IRAM_ATTR DIO0_isr_handler(void* arg)
-{
-   RxDoneFlag=1;
-}
-
-void resetRxDone(){
-   RxDoneFlag=0;
-}
-
-uint8_t isRxDone(){
-   return RxDoneFlag;
-}
-
 /**
- * Write values to a register in burst mode.max 50 bytes
+ * Write values to a register in burst mode.max 255 bytes
  * @param reg Register index.
  * @param buffer pointer to the buffer from which data is written.
  * @param length number of bytes to be written
  */
 void lora_write_reg_burst(uint8_t reg,uint8_t *buffer,uint8_t length){
-   if (length>50){
-      printf("SPI WRITE ERROR! burst length>50\n");
-		return ;
+   if (length>BURST_MAX_LENGTH-1){
+      printf("SPI WRITE ERROR! burst length>%d\n",BURST_MAX_LENGTH);
+      length=BURST_MAX_LENGTH;
+		// return ;
    }
-   uint8_t out[51]={0};
-   uint8_t in[51];
+   uint8_t out[BURST_MAX_LENGTH]={0};
+   uint8_t in[BURST_MAX_LENGTH];
 
    out[0] = 0x80 | reg ;
    for (uint8_t i = 0; i < length; i++)
@@ -193,10 +182,12 @@ int lora_read_reg(int reg)
  * Read the current value of a register in burst mode.
  * @param reg Register index.
  * @param buffer Pointer to the buffer to store read data.
+ * @param length length of the buffer(MAX 255)
  */
 void lora_read_reg_burst(uint8_t reg,uint8_t *buffer,uint8_t length)
 {
-   uint8_t out[256] = { 0xff };
+   uint8_t out[BURST_MAX_LENGTH] = { 0xff };
+   uint8_t in[BURST_MAX_LENGTH]={0};
 
    out[0]=reg;
 
@@ -204,13 +195,35 @@ void lora_read_reg_burst(uint8_t reg,uint8_t *buffer,uint8_t length)
       .flags = 0,
       .length = 8 * (length+1),
       .tx_buffer = out,
-      .rx_buffer = buffer
+      .rx_buffer = in
    };
 
    //gpio_set_level(CONFIG_LORA_CS_GPIO, 0);
    spi_device_transmit(__spi, &t);
    //gpio_set_level(CONFIG_LORA_CS_GPIO, 1);
+   for(int i=0;i<length;i++){
+      buffer[i]=in[i+1];
+   }
+   return;
 }
+
+static void IRAM_ATTR DIO0_isr_handler(void* arg)
+{
+   RxDoneFlag=1;
+   //printf("\nLoRa DIO0 triggered\n");
+}
+
+void resetRxDone(){
+   lora_write_reg(REG_IRQ_FLAGS,IRQ_RX_DONE_MASK);
+   RxDoneFlag=0;
+}
+
+uint8_t isRxDone(){
+   // if((lora_read_reg(REG_IRQ_FLAGS) & IRQ_RX_DONE_MASK) != 0)
+   //    RxDoneFlag=1;
+   return RxDoneFlag;
+}
+
 /**
  * Perform physical reset on the Lora chip
  */
@@ -283,6 +296,7 @@ lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_TX);
  * Sets the radio transceiver in single receive mode.
  * Incoming packet will be received.
  */
+
 void lora_receive_single(void)
 {
    lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE);
@@ -413,6 +427,16 @@ lora_enable_crc(void)
    lora_write_reg(REG_MODEM_CONFIG_2, lora_read_reg(REG_MODEM_CONFIG_2) | 0x04);
 }
 
+
+/**
+ * Set DIO functions.
+ */
+void setDIO(enum DIO0modeEnum DIO0mode,enum DIO1modeEnum DIO1mode,enum DIO2modeEnum DIO2mode,enum DIO3modeEnum DIO3mode,enum DIO4modeEnum DIO4mode,enum DIO5modeEnum DIO5mode){
+   lora_write_reg(REG_DIO_MAPPING_1,(DIO0mode<<6)|(DIO1mode<<4)|(DIO2mode<<2)|(DIO3mode));
+   lora_write_reg(REG_DIO_MAPPING_2,(DIO4mode<<6)|(DIO5mode));
+}
+
+
 /**
  * Disable appending/verifying packet CRC.
  */
@@ -426,7 +450,7 @@ lora_disable_crc(void)
  * Perform hardware initialization.
  */
 uint8_t 
-lora_init(int current_spi_host)
+lora_init()
 {
    esp_err_t ret;
 
@@ -471,7 +495,7 @@ lora_init(int current_spi_host)
    /**
     * Configure SPI bus and device
     */
-   /*
+   
    spi_bus_config_t bus = {
       .miso_io_num = CONFIG_LORA_MISO_GPIO,
       .mosi_io_num = CONFIG_LORA_MOSI_GPIO,
@@ -483,7 +507,7 @@ lora_init(int current_spi_host)
    
    ret = spi_bus_initialize(SPI2_HOST, &bus, 0);
    assert(ret == ESP_OK);
-   */
+   
   
    spi_device_interface_config_t dev = {
       .clock_speed_hz = 1000000,
@@ -493,7 +517,7 @@ lora_init(int current_spi_host)
       .flags = 0,
       .pre_cb = NULL
    };
-   ret = spi_bus_add_device(current_spi_host, &dev, &__spi);
+   ret = spi_bus_add_device(SPI2_HOST, &dev, &__spi);
    assert(ret == ESP_OK);
 
    /*
@@ -509,10 +533,10 @@ lora_init(int current_spi_host)
    while(i++ < TIMEOUT_RESET) {
       version = lora_read_reg(REG_VERSION);
       if(version == 0x12) {
-         printf("version good");
+         //ESP_LOGI("LoRa","version good");
          break;
          }
-      vTaskDelay(2);
+      vTaskDelay(2/portTICK_PERIOD_MS);
    }
    assert(i <= TIMEOUT_RESET + 1); // at the end of the loop above, the max value i can reach is TIMEOUT_RESET + 1
 
@@ -520,14 +544,15 @@ lora_init(int current_spi_host)
     * Default configuration.
     */
    lora_sleep();
+   
    lora_write_reg(REG_FIFO_RX_BASE_ADDR, 0);
    lora_write_reg(REG_FIFO_TX_BASE_ADDR, 0);
    lora_write_reg(REG_LNA, lora_read_reg(REG_LNA) | 0x03);
    lora_write_reg(REG_MODEM_CONFIG_3, 0x04);
    lora_set_tx_power(12);
-
+   setDIO(DIO0RxDone,DIO1RxTimeout,DIO2Fhss,DIO3ValidHeader,DIO4CadDetected,DIO5ModeReady);
    lora_idle();
-   return 1;
+   return version;
 }
 
 /**
@@ -543,7 +568,6 @@ lora_send_packet(uint8_t *buf, int size)
     */
    lora_idle();
    lora_write_reg(REG_FIFO_ADDR_PTR, 0);
-
    // for(int i=0; i<size; i++) {
    //    lora_write_reg(REG_FIFO, *buf++);
    // }
@@ -556,10 +580,21 @@ lora_send_packet(uint8_t *buf, int size)
     */
    //lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_TX);
    lora_transmit();
-   while((lora_read_reg(REG_IRQ_FLAGS) & IRQ_TX_DONE_MASK) == 0)
+   // printf("aici am pus modulu in modu transmit\n");
+   // while((lora_read_reg(REG_IRQ_FLAGS) & IRQ_TX_DONE_MASK) == 0)
+   //    vTaskDelay(2);
+   uint8_t i = 0;
+   while(i++ < TIMEOUT_RESET) {
+      if((lora_read_reg(REG_IRQ_FLAGS) & IRQ_TX_DONE_MASK) != 0) {
+         //ESP_LOGI("LoRa","version good");
+         break;
+         }
       vTaskDelay(2);
-
+   }
+   assert(i <= TIMEOUT_RESET + 1); // at the end of the loop above, the max value i can reach is TIMEOUT_RESET + 1
+   // printf("aici a dat intr flag ca e gata\n");
    lora_write_reg(REG_IRQ_FLAGS, IRQ_TX_DONE_MASK);
+   lora_idle();
 }
 
 /**
@@ -654,8 +689,4 @@ lora_dump_registers(void)
    printf("\n");
 }
 
-void setDIO(enum DIO0modeEnum DIO0mode,enum DIO1modeEnum DIO1mode,enum DIO2modeEnum DIO2mode,enum DIO3modeEnum DIO3mode,enum DIO4modeEnum DIO4mode,enum DIO5modeEnum DIO5mode){
-   lora_idle();
-   lora_write_reg(REG_DIO_MAPPING_1,(DIO0mode<<6)|(DIO1mode<<4)|(DIO2mode<<2)|(DIO3mode));
-   lora_write_reg(REG_DIO_MAPPING_2,(DIO4mode<<6)|(DIO5mode));
-}
+

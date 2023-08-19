@@ -4,6 +4,18 @@
   "idf.openOcdConfigs": [
     "board/esp32s3-builtin.cfg"
   ],
-  "idf.port": "/dev/ttyACM0",
-  "idf.flashType": "JTAG"
+  "idf.port": "/dev/ttyACM2",
+  "idf.flashType": "UART",
+  "files.associations": {
+    "gpgsa.h": "c",
+    "stdlib.h": "c",
+    "nvs.h": "c",
+    "esp_console.h": "c",
+    "string.h": "c",
+    "gpio_struct.h": "c",
+    "gpio.h": "c",
+    "system_error": "c",
+    "nmea.h": "c"
+  },
+  "cmake.configureOnOpen": true
 }
