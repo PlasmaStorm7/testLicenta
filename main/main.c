@@ -20,7 +20,9 @@
 #include "cmd_nvs.h"
 #include "cmd_wifi.h"
 
-// #include ""
+#include "nmea_parser.h"
+
+
 #include "nmea_example.h"
 #include "nmea.h"
 #include "gpgll.h"
@@ -34,12 +36,19 @@
 #define DISP_POWER_PIN GPIO_NUM_18
 
 static const char* tag = "OGC";
+static const char* gpsTag = "GPS";
+static const char* loraTag = "LoRa";
+
+#define TIME_ZONE (+3)   //EEST
+#define YEAR_BASE (2000) //date in GPS starts from 2000
+nmea_parser_handle_t nmea_hdl;
+uint8_t gpsState=0;
 #define PROMPT_STR "OGC"
 #define MESSAGE_MAX_LENGTH 255
 #define UUID_LENGTH 10
 uint8_t buf[MESSAGE_MAX_LENGTH]={"salut\0"};
 uint8_t prevBuf[MESSAGE_MAX_LENGTH]={0};
-uint8_t ReceiveState=0;
+uint8_t receiveState=0;
 uint8_t baseMac[6];
 char hexMac[sizeof(baseMac)*2 + 1];
 char HexLookUp[] = "0123456789ABCDEF";
@@ -99,6 +108,38 @@ void bytes2hex (unsigned char *src, char *out, int len)
     *out = 0;
 }
 
+/**
+ * @brief GPS Event Handler
+ *
+ * @param event_handler_arg handler specific arguments
+ * @param event_base event base, here is fixed to ESP_NMEA_EVENT
+ * @param event_id event id
+ * @param event_data event specific arguments
+ */
+static void gps_event_handler(void *event_handler_arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
+{
+    gps_t *gps = NULL;
+    switch (event_id) {
+    case GPS_UPDATE:
+        gps = (gps_t *)event_data;
+        /* print information parsed from GPS statements */
+        ESP_LOGI(gpsTag, "%d/%d/%d %d:%d:%d => \r\n"
+                 "\t\t\t\t\t\tlatitude   = %.05f°N\r\n"
+                 "\t\t\t\t\t\tlongitude = %.05f°E\r\n"
+                 "\t\t\t\t\t\taltitude   = %.02fm\r\n"
+                 "\t\t\t\t\t\tspeed      = %fm/s",
+                 gps->date.year + YEAR_BASE, gps->date.month, gps->date.day,
+                 gps->tim.hour + TIME_ZONE, gps->tim.minute, gps->tim.second,
+                 gps->latitude, gps->longitude, gps->altitude, gps->speed);
+        break;
+    case GPS_UNKNOWN:
+        /* print unknown statements */
+        ESP_LOGW(gpsTag, "Unknown statement:%s", (char *)event_data);
+        break;
+    default:
+        break;
+    }
+}
 void loraRead(){
 	uint8_t buf[512];
 	lora_idle();
@@ -119,7 +160,7 @@ void loraRead(){
 
 void loraTransmitMessage(char* message){
 	// uint8_t prevReceiveState=ReceiveState;
-	ReceiveState=0;
+	receiveState=0;
 	lora_idle();
 	//ESP_LOGI(tag,"message before truncating is %s",message);
 	int len=strlen(message);
@@ -130,10 +171,10 @@ void loraTransmitMessage(char* message){
 	}
 	
 	lora_send_packet((uint8_t*) message,len);
-	ESP_LOGI("LoRa","message %s sent",message);
+	ESP_LOGI(loraTag,"message %s sent",message);
 	memcpy(prevBuf,message,len);
 	lora_receive();
-	ReceiveState=1;
+	receiveState=1;
 }
 
 int LoRa_send(int argc, char **argv){
@@ -159,8 +200,8 @@ esp_err_t esp_console_register_LoRa_send(void){
 
 int RxDoneCheck(int argc, char **argv){
 	int RxDoneFlag=isRxDone();
-	ESP_LOGI("LoRa","RxDoneFlag=%d",RxDoneFlag);
-	ESP_LOGI("LoRa","ReceiveState=%d",ReceiveState);
+	ESP_LOGI(loraTag,"RxDoneFlag=%d",RxDoneFlag);
+	ESP_LOGI(loraTag,"ReceiveState=%d",receiveState);
 	return RxDoneFlag;
 }
 
@@ -175,19 +216,19 @@ esp_err_t register_LoRa_RxDoneCheck(){
 }
 
 int setReceive(int argc, char **argv){
-	ESP_LOGI("LoRa","ReceiveState was: %d",ReceiveState);
+	ESP_LOGI(loraTag,"ReceiveState was: %d",receiveState);
 	switch(argv[1][0])
 	{
 		case '0':
-			ReceiveState=0;
-			ESP_LOGI("LoRa","Receive state set to 0(off)");
+			receiveState=0;
+			ESP_LOGI(loraTag,"Receive state set to 0(off)");
 			return 0;
 		case '1':
-			ReceiveState=1;
-			ESP_LOGI("LoRa","Receive state set to 1(on)");
+			receiveState=1;
+			ESP_LOGI(loraTag,"Receive state set to 1(on)");
 			return 0;
 		default:
-			ESP_LOGI("LoRa","Invalid state descriptor, state unchanged");
+			ESP_LOGI(loraTag,"Invalid state descriptor, state unchanged");
 			return -1;
 	}
 }
@@ -202,19 +243,56 @@ esp_err_t register_LoRa_SetReceiveState(){
     return esp_console_cmd_register(&command);
 }
 
+int setGPS(int argc, char **argv){
+	ESP_LOGI(gpsTag,"GpsState was: %d",gpsState);
+	switch(argv[1][0])
+	{
+		case '0':
+			if(0!=gpsState){
+				nmea_parser_remove_handler(nmea_hdl, gps_event_handler);
+				gpsState=0;
+				ESP_LOGI(gpsTag,"gpsState set to 0(off)");
+			}else{
+				ESP_LOGW(gpsTag,"GPS was already off(0)");
+			}
+			return 0;
+		case '1':
+			if(1!=gpsState){
+				nmea_parser_add_handler(nmea_hdl, gps_event_handler,NULL);
+				gpsState=1;
+				ESP_LOGI(gpsTag,"gpsState set to 1(on)");
+			}else{
+				ESP_LOGW(gpsTag,"GPS was already on(1)");	
+			}
+			return 0;
+		default:
+			ESP_LOGI(gpsTag,"Invalid state descriptor, state unchanged");
+			return -1;
+	}
+}
+esp_err_t register_GPS_SetGpsState(){
+	esp_console_cmd_t command = {
+        .command = "gps_state",
+        .help = "Set the GPS state on or off",
+        .hint = "[0|1]",
+        .func = &setGPS
+    };
+    return esp_console_cmd_register(&command);
+}
+
 void RxTask(void *p){
 	int packetLength;
 	
 	lora_receive();   
 	for(;;) {
-	while(1==ReceiveState){
+	while(1==receiveState){
 		
-	//ESP_LOGI("LoRa","checking for LoRa packet");
+	//ESP_LOGI(loraTag,"checking for LoRa packet");
 		while(isRxDone()) {
 			packetLength = lora_receive_packet(buf, sizeof(buf));
 			resetRxDone();
 			if(packetLength==0){
-				ESP_LOGI("LoRa","CRC Error with %.2f SNR and %d RSSI\n",lora_packet_snr(),lora_packet_rssi());
+				ESP_LOGI(loraTag,"CRC Error with %.2f SNR and %d RSSI\n",lora_packet_snr(),lora_packet_rssi());
 				lora_receive();
 				break;
 			}
@@ -222,10 +300,10 @@ void RxTask(void *p){
 			if(packetLength>254)
 			packetLength=254;
 			buf[packetLength+1] = 0;//string terminator
-			ESP_LOGI("LoRa","Received:\"%s\" SNR:%.2f RSSI:%d", buf,lora_packet_snr(),lora_packet_rssi());
-			// ESP_LOGI("LoRa","buf= \"%s\" prevbuf= \"%s\"",buf,prevBuf);
+			ESP_LOGI(loraTag,"Received:\"%s\" SNR:%.2f RSSI:%d", buf,lora_packet_snr(),lora_packet_rssi());
+			// ESP_LOGI(loraTag,"buf= \"%s\" prevbuf= \"%s\"",buf,prevBuf);
 			if(0 == arraysAreIdentical(buf,prevBuf,packetLength)){
-				ESP_LOGI("LoRa","Relaying  \"%s\" , length %d",buf,packetLength);
+				ESP_LOGI(loraTag,"Relaying  \"%s\" , length %d",buf,packetLength);
 				lora_send_packet(buf,packetLength);
 				memcpy(prevBuf,buf,sizeof(buf));
 			}
@@ -328,7 +406,7 @@ void gpsTask(){
 
         char *start;
         size_t length;
-        nmea_example_read_line(&start, &length, 1000 /* ms */);
+        nmea_example_read_line(&start, &length, 5000 /* ms */);
         if (length == 0) {
 			ESP_LOGI("GPS","no read");
             continue;
@@ -448,15 +526,19 @@ void gpsTask(){
 
 void app_main(void)
 {
-	nmea_example_init_interface();
+	
 
 
 	uint8_t loraVersion=lora_init();
-	ESP_LOGI("LoRa","LoRa Version is 0x%02x",loraVersion);
+	ESP_LOGI(loraTag,"LoRa Version is 0x%02x",loraVersion);
 	lora_set_bandwidth(125E3);
-	lora_set_frequency(8683e5);//868.3Mhz, bandwidth 125Khz ,banda libera up to 1% duty cycle
+	//lora_set_frequency(8683e5);//868.3Mhz, bandwidth 125Khz ,banda libera up to 1% duty cycle
+	lora_set_frequency(869525e3);//869.4-869.65 BW 125kHz banda de downlink max 27dB si 10% DC
+	lora_set_tx_power(17);//ONLY USE 17 IF IN THE 868.525 BAND!!! 14 otherwise
 	lora_enable_crc();
-	ReceiveState=0;
+	lora_set_sync_word(42);
+	
+	receiveState=0;
 
 	gpio_set_direction(DISP_POWER_PIN,GPIO_MODE_OUTPUT);
 
@@ -497,6 +579,7 @@ void app_main(void)
     esp_console_register_LoRa_send();
 	register_LoRa_RxDoneCheck();
 	register_LoRa_SetReceiveState();
+	register_GPS_SetGpsState();
     register_system();
     register_wifi();
     register_nvs();
@@ -522,7 +605,16 @@ void app_main(void)
 	
 
 	ESP_ERROR_CHECK(esp_console_start_repl(repl));
-	xTaskCreate(&gpsTask, "task_gps", 4096, NULL,1, NULL);
+	//nmea_example_init_interface();
+	//xTaskCreate(&gpsTask, "task_gps_nmea_example", 4096, NULL,1, NULL);
+	 /* NMEA parser configuration */
+    nmea_parser_config_t config = NMEA_PARSER_CONFIG_DEFAULT();
+    /* init NMEA parser library */
+    nmea_hdl = nmea_parser_init(&config);
+    /* register event handler for NMEA parser library */
+	if(1==gpsState){
+    	nmea_parser_add_handler(nmea_hdl, gps_event_handler, NULL);
+	}
 	xTaskCreate(&RxTask, "task_rx", 4096, NULL,2, NULL);
     // xTaskCreate(&gpsTask,"GPS Task",2048,NULL,2,NULL);
 	//xTaskCreate(&consoleTask,"Console Task",2048,repl,2,NULL);
