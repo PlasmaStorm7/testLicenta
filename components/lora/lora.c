@@ -123,7 +123,7 @@ void lora_write_reg_burst(uint8_t reg,uint8_t *buffer,uint8_t length){
 
    if(spi_device_transmit(__spi, &t) != ESP_OK)
 	{
-		printf("SPI WRITE ERROR!\n");
+		printf("SPI BURST WRITE ERROR!\n");
 		return ;
 	}
    return;

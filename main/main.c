@@ -23,15 +23,15 @@
 #include "nmea_parser.h"
 
 
-#include "nmea_example.h"
-#include "nmea.h"
-#include "gpgll.h"
-#include "gpgga.h"
-#include "gprmc.h"
-#include "gpgsa.h"
-#include "gpvtg.h"
-#include "gptxt.h"
-#include "gpgsv.h"
+// #include "nmea_example.h"
+// #include "nmea.h"
+// #include "gpgll.h"
+// #include "gpgga.h"
+// #include "gprmc.h"
+// #include "gpgsa.h"
+// #include "gpvtg.h"
+// #include "gptxt.h"
+// #include "gpgsv.h"
 
 #define DISP_POWER_PIN GPIO_NUM_18
 
@@ -42,13 +42,14 @@ static const char* loraTag = "LoRa";
 #define TIME_ZONE (+3)   //EEST
 #define YEAR_BASE (2000) //date in GPS starts from 2000
 nmea_parser_handle_t nmea_hdl;
-uint8_t gpsState=0;
+gps_t gpsData;
+uint8_t gpsState=1;
 #define PROMPT_STR "OGC"
 #define MESSAGE_MAX_LENGTH 255
-#define UUID_LENGTH 10
+#define UUID_LENGTH 7
 uint8_t buf[MESSAGE_MAX_LENGTH]={"salut\0"};
 uint8_t prevBuf[MESSAGE_MAX_LENGTH]={0};
-uint8_t receiveState=0;
+uint8_t receiveState=1;
 uint8_t baseMac[6];
 char hexMac[sizeof(baseMac)*2 + 1];
 char HexLookUp[] = "0123456789ABCDEF";
@@ -118,19 +119,26 @@ void bytes2hex (unsigned char *src, char *out, int len)
  */
 static void gps_event_handler(void *event_handler_arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
-    gps_t *gps = NULL;
+	
+    gps_t *gpsP = NULL;
     switch (event_id) {
     case GPS_UPDATE:
-        gps = (gps_t *)event_data;
+        gpsP = (gps_t *)event_data;
         /* print information parsed from GPS statements */
-        ESP_LOGI(gpsTag, "%d/%d/%d %d:%d:%d => \r\n"
-                 "\t\t\t\t\t\tlatitude   = %.05f°N\r\n"
-                 "\t\t\t\t\t\tlongitude = %.05f°E\r\n"
-                 "\t\t\t\t\t\taltitude   = %.02fm\r\n"
-                 "\t\t\t\t\t\tspeed      = %fm/s",
-                 gps->date.year + YEAR_BASE, gps->date.month, gps->date.day,
-                 gps->tim.hour + TIME_ZONE, gps->tim.minute, gps->tim.second,
-                 gps->latitude, gps->longitude, gps->altitude, gps->speed);
+		// ESP_LOGI(gpsTag, "%d/%d/%d %d:%d:%d => \r\n"
+        //          "latitude   = %.05f°N\r\n"
+        //          "longitude = %.05f°E\r\n"
+        //          "altitude   = %.02fm\r\n"
+        //          "speed      = %fm/s\n"
+		// 		 "validity=%d fix=%d",
+        //          gpsP->date.year + YEAR_BASE, gpsP->date.month, gpsP->date.day,
+        //          gpsP->tim.hour + TIME_ZONE, gpsP->tim.minute, gpsP->tim.second,
+        //          gpsP->latitude, gpsP->longitude, gpsP->altitude, gpsP->speed,
+		// 		 gpsP->valid, gpsP->fix);
+		if(gpsP->valid){
+			gpsData=*gpsP;
+		}else
+			gpsData.valid=false;
         break;
     case GPS_UNKNOWN:
         /* print unknown statements */
@@ -182,8 +190,19 @@ int LoRa_send(int argc, char **argv){
 	char message[MESSAGE_MAX_LENGTH]={0};
 	strncat(message,UUIDstr,UUID_LENGTH);
 	//ESP_LOGI("tag","UUIDstr copied into message=%s",message);
-	strncat(message,argv[1],255-UUID_LENGTH);
+	strncat(message,argv[1],UUID_LENGTH);
+	strncat(message,argv[2],255-(2*UUID_LENGTH));
 	loraTransmitMessage(message);
+	ESP_LOGI(gpsTag, "%d/%d/%d %d:%d:%d => \r\n"
+                 "latitude   = %.05f°N\r\n"
+                 "longitude = %.05f°E\r\n"
+                 "altitude   = %.02fm\r\n"
+                 "speed      = %fm/s\n"
+				 "validity=%d fix=%d",
+                 gpsData.date.year + YEAR_BASE, gpsData.date.month, gpsData.date.day,
+                 gpsData.tim.hour + TIME_ZONE, gpsData.tim.minute, gpsData.tim.second,
+                 gpsData.latitude, gpsData.longitude, gpsData.altitude, gpsData.speed,
+				 gpsData.valid, gpsData.fix);
     return 0;
 
 }
@@ -191,8 +210,8 @@ int LoRa_send(int argc, char **argv){
 esp_err_t esp_console_register_LoRa_send(void){
     esp_console_cmd_t command = {
         .command = "send",
-        .help = "Transmit the specified message",
-        .hint = "message",
+        .help = "Broadcast the message and specify destination",
+        .hint = "[destination UUIDstr] [message]",
         .func = &LoRa_send
     };
     return esp_console_cmd_register(&command);
@@ -282,7 +301,12 @@ esp_err_t register_GPS_SetGpsState(){
 
 void RxTask(void *p){
 	int packetLength;
-	
+	char* responseText="Received your message";
+	uint8_t responseLen=strlen(responseText);
+	char response[responseLen+UUID_LENGTH];
+	strncpy(response,UUIDstr,UUID_LENGTH);
+	strncat(response,responseText,responseLen+1);
+	responseLen+= UUID_LENGTH;
 	lora_receive();   
 	for(;;) {
 	while(1==receiveState){
@@ -302,7 +326,11 @@ void RxTask(void *p){
 			buf[packetLength+1] = 0;//string terminator
 			ESP_LOGI(loraTag,"Received:\"%s\" SNR:%.2f RSSI:%d", buf,lora_packet_snr(),lora_packet_rssi());
 			// ESP_LOGI(loraTag,"buf= \"%s\" prevbuf= \"%s\"",buf,prevBuf);
-			if(0 == arraysAreIdentical(buf,prevBuf,packetLength)){
+			if(1 == arraysAreIdentical(buf+UUID_LENGTH,(uint8_t*)UUIDstr,UUID_LENGTH))
+			{
+				ESP_LOGI(loraTag,"Received a message destined for this device\nRelaying a response");
+				lora_send_packet((uint8_t*)response,responseLen);
+			}else if(0 == arraysAreIdentical(buf,prevBuf,packetLength) && buf[6]=='>' && buf[13]=='>'){
 				ESP_LOGI(loraTag,"Relaying  \"%s\" , length %d",buf,packetLength);
 				lora_send_packet(buf,packetLength);
 				memcpy(prevBuf,buf,sizeof(buf));
@@ -316,211 +344,8 @@ void RxTask(void *p){
 	vTaskDelete(NULL);
 }
 
-int gpsRead(){
-    // Sentence string to be parsed
-	// char sentence[] = "$GPGLL,4916.45,N,12311.12,W,225444,A,*1D\r\n";
-	// char sentence[] = "$GPGSA,A,1,,,,,,,,,,,,,99.99,99.99,99.99*30\r\n";
-	// char sentence[] = "$GPTXT,01,03,02,u-blox ag - www.u-blox.com*50\r\n";
-	// char sentence[] = "$GPVTG,054.7,T,034.4,M,005.5,N,010.2,K\r\n";
-	char sentence[] = "$GPGSV,3,1,11,03,03,111,00,04,15,270,00,06,01,010,00,13,06,292,00*74\r\n";
-
-	printf("Parsing NMEA sentence: %s", sentence);
-
-	// Pointer to struct containing the parsed data. Should be freed manually.
-	nmea_s *data;
-
-	// Parse...
-	data = nmea_parse(sentence, strlen(sentence), 0);
-
-	if(NULL == data) {
-		printf("Failed to parse sentence!\n");
-		return -1;
-	}
-
-	if (NMEA_GPGLL == data->type) {
-		nmea_gpgll_s *gpgll = (nmea_gpgll_s *) data;
-
-		printf("GPGLL Sentence\n");
-		printf("Longitude:\n");
-		printf("  Degrees: %d\n", gpgll->longitude.degrees);
-		printf("  Minutes: %f\n", gpgll->longitude.minutes);
-		printf("  Cardinal: %c\n", (char) gpgll->longitude.cardinal);
-		printf("Latitude:\n");
-		printf("  Degrees: %d\n", gpgll->latitude.degrees);
-		printf("  Minutes: %f\n", gpgll->latitude.minutes);
-		printf("  Cardinal: %c\n", (char) gpgll->latitude.cardinal);
-	}
-
-	if (NMEA_GPGSA == data->type) {
-		nmea_gpgsa_s *gpgsa = (nmea_gpgsa_s *) data;
-
-		printf("GPGSA Sentence:\n");
-		printf("\tMode: %c\n", gpgsa->mode);
-		printf("\tFix:  %d\n", gpgsa->fixtype);
-		printf("\tPDOP: %.2lf\n", gpgsa->pdop);
-		printf("\tHDOP: %.2lf\n", gpgsa->hdop);
-		printf("\tVDOP: %.2lf\n", gpgsa->vdop);
-	}
-
-	if (NMEA_GPVTG == data->type) {
-		nmea_gpvtg_s *gpvtg = (nmea_gpvtg_s *) data;
-
-		printf("GPVTG Sentence:\n");
-		printf("\tTrack [deg]:   %.2lf\n", gpvtg->track_deg);
-		printf("\tSpeed [kmph]:  %.2lf\n", gpvtg->gndspd_kmph);
-		printf("\tSpeed [knots]: %.2lf\n", gpvtg->gndspd_knots);
-	}
-
-	if (NMEA_GPTXT == data->type) {
-		nmea_gptxt_s *gptxt = (nmea_gptxt_s *) data;
-
-		printf("GPTXT Sentence:\n");
-		printf("\tID: %d %d %d\n", gptxt->id_00, gptxt->id_01, gptxt->id_02);
-		printf("\t%s\n", gptxt->text);
-	}
-
-	if (NMEA_GPGSV == data->type) {
-		nmea_gpgsv_s *gpgsv = (nmea_gpgsv_s *) data;
-
-		printf("GPGSV Sentence:\n");
-		printf("\tNum: %d\n", gpgsv->sentences);
-		printf("\tID:  %d\n", gpgsv->sentence_number);
-		printf("\tSV:  %d\n", gpgsv->satellites);
-		printf("\t#1:  %d %d %d %d\n", gpgsv->sat[0].prn, gpgsv->sat[0].elevation, gpgsv->sat[0].azimuth, gpgsv->sat[0].snr);
-		printf("\t#2:  %d %d %d %d\n", gpgsv->sat[1].prn, gpgsv->sat[1].elevation, gpgsv->sat[1].azimuth, gpgsv->sat[1].snr);
-		printf("\t#3:  %d %d %d %d\n", gpgsv->sat[2].prn, gpgsv->sat[2].elevation, gpgsv->sat[2].azimuth, gpgsv->sat[2].snr);
-		printf("\t#4:  %d %d %d %d\n", gpgsv->sat[3].prn, gpgsv->sat[3].elevation, gpgsv->sat[3].azimuth, gpgsv->sat[3].snr);
-	}
-
-	nmea_free(data);
-
-	return 0;
-}
 
 void gpsTask(){
-	while(1){
-		vTaskDelay(1000/portTICK_PERIOD_MS);
-		// ESP_LOGI("GPS","GPS Tasking");
-	char fmt_buf[32];
-        nmea_s *data;
-
-        char *start;
-        size_t length;
-        nmea_example_read_line(&start, &length, 5000 /* ms */);
-        if (length == 0) {
-			ESP_LOGI("GPS","no read");
-            continue;
-        }
-
-        /* handle data */
-        data = nmea_parse(start, length, 0);
-        if (data == NULL) {
-            printf("Failed to parse the sentence!\n");
-            printf("  Type: %.5s (%d)\n", start + 1, nmea_get_type(start));
-        } else {
-            if (data->errors != 0) {
-                printf("WARN: The sentence struct contains parse errors!\n");
-            }
-
-            if (NMEA_GPGGA == data->type) {
-                printf("GPGGA sentence\n");
-                nmea_gpgga_s *gpgga = (nmea_gpgga_s *) data;
-                printf("Number of satellites: %d\n", gpgga->n_satellites);
-                printf("Altitude: %f %c\n", gpgga->altitude,
-                       gpgga->altitude_unit);
-            }
-
-            if (NMEA_GPGLL == data->type) {
-                printf("GPGLL sentence\n");
-                nmea_gpgll_s *pos = (nmea_gpgll_s *) data;
-                printf("Longitude:\n");
-                printf("  Degrees: %d\n", pos->longitude.degrees);
-                printf("  Minutes: %f\n", pos->longitude.minutes);
-                printf("  Cardinal: %c\n", (char) pos->longitude.cardinal);
-                printf("Latitude:\n");
-                printf("  Degrees: %d\n", pos->latitude.degrees);
-                printf("  Minutes: %f\n", pos->latitude.minutes);
-                printf("  Cardinal: %c\n", (char) pos->latitude.cardinal);
-                strftime(fmt_buf, sizeof(fmt_buf), "%H:%M:%S", &pos->time);
-                printf("Time: %s\n", fmt_buf);
-            }
-
-            if (NMEA_GPRMC == data->type) {
-                printf("GPRMC sentence\n");
-                nmea_gprmc_s *pos = (nmea_gprmc_s *) data;
-                printf("Longitude:\n");
-                printf("  Degrees: %d\n", pos->longitude.degrees);
-                printf("  Minutes: %f\n", pos->longitude.minutes);
-                printf("  Cardinal: %c\n", (char) pos->longitude.cardinal);
-                printf("Latitude:\n");
-                printf("  Degrees: %d\n", pos->latitude.degrees);
-                printf("  Minutes: %f\n", pos->latitude.minutes);
-                printf("  Cardinal: %c\n", (char) pos->latitude.cardinal);
-                strftime(fmt_buf, sizeof(fmt_buf), "%d %b %T %Y", &pos->date_time);
-                printf("Date & Time: %s\n", fmt_buf);
-                printf("Speed, in Knots: %f\n", pos->gndspd_knots);
-                printf("Track, in degrees: %f\n", pos->track_deg);
-                printf("Magnetic Variation:\n");
-                printf("  Degrees: %f\n", pos->magvar_deg);
-                printf("  Cardinal: %c\n", (char) pos->magvar_cardinal);
-                double adjusted_course = pos->track_deg;
-                if (NMEA_CARDINAL_DIR_EAST == pos->magvar_cardinal) {
-                    adjusted_course -= pos->magvar_deg;
-                } else if (NMEA_CARDINAL_DIR_WEST == pos->magvar_cardinal) {
-                    adjusted_course += pos->magvar_deg;
-                } else {
-                    printf("Invalid Magnetic Variation Direction!\n");
-                }
-
-                printf("Adjusted Track (heading): %f\n", adjusted_course);
-            }
-
-            if (NMEA_GPGSA == data->type) {
-                nmea_gpgsa_s *gpgsa = (nmea_gpgsa_s *) data;
-
-                printf("GPGSA Sentence:\n");
-                printf("  Mode: %c\n", gpgsa->mode);
-                printf("  Fix:  %d\n", gpgsa->fixtype);
-                printf("  PDOP: %.2lf\n", gpgsa->pdop);
-                printf("  HDOP: %.2lf\n", gpgsa->hdop);
-                printf("  VDOP: %.2lf\n", gpgsa->vdop);
-            }
-
-            if (NMEA_GPGSV == data->type) {
-                nmea_gpgsv_s *gpgsv = (nmea_gpgsv_s *) data;
-
-                printf("GPGSV Sentence:\n");
-                printf("  Num: %d\n", gpgsv->sentences);
-                printf("  ID:  %d\n", gpgsv->sentence_number);
-                printf("  SV:  %d\n", gpgsv->satellites);
-                printf("  #1:  %d %d %d %d\n", gpgsv->sat[0].prn, gpgsv->sat[0].elevation, gpgsv->sat[0].azimuth, gpgsv->sat[0].snr);
-                printf("  #2:  %d %d %d %d\n", gpgsv->sat[1].prn, gpgsv->sat[1].elevation, gpgsv->sat[1].azimuth, gpgsv->sat[1].snr);
-                printf("  #3:  %d %d %d %d\n", gpgsv->sat[2].prn, gpgsv->sat[2].elevation, gpgsv->sat[2].azimuth, gpgsv->sat[2].snr);
-                printf("  #4:  %d %d %d %d\n", gpgsv->sat[3].prn, gpgsv->sat[3].elevation, gpgsv->sat[3].azimuth, gpgsv->sat[3].snr);
-            }
-
-            if (NMEA_GPTXT == data->type) {
-                nmea_gptxt_s *gptxt = (nmea_gptxt_s *) data;
-
-                printf("GPTXT Sentence:\n");
-                printf("  ID: %d %d %d\n", gptxt->id_00, gptxt->id_01, gptxt->id_02);
-                printf("  %s\n", gptxt->text);
-            }
-
-            if (NMEA_GPVTG == data->type) {
-                nmea_gpvtg_s *gpvtg = (nmea_gpvtg_s *) data;
-
-                printf("GPVTG Sentence:\n");
-                printf("  Track [deg]:   %.2lf\n", gpvtg->track_deg);
-                printf("  Speed [kmph]:  %.2lf\n", gpvtg->gndspd_kmph);
-                printf("  Speed [knots]: %.2lf\n", gpvtg->gndspd_knots);
-            }
-
-            nmea_free(data);
-        }
-		ESP_LOGI("GPS","we bee sleepy");
-	vTaskDelay(1000/portTICK_PERIOD_MS);	
-	}
 	
 }
 
@@ -536,9 +361,9 @@ void app_main(void)
 	lora_set_frequency(869525e3);//869.4-869.65 BW 125kHz banda de downlink max 27dB si 10% DC
 	lora_set_tx_power(17);//ONLY USE 17 IF IN THE 868.525 BAND!!! 14 otherwise
 	lora_enable_crc();
-	lora_set_sync_word(42);
+	lora_set_spreading_factor(7);
+	// lora_set_sync_word(35);
 	
-	receiveState=0;
 
 	gpio_set_direction(DISP_POWER_PIN,GPIO_MODE_OUTPUT);
 
@@ -549,12 +374,11 @@ void app_main(void)
     ESP_LOGI(tag,"Mac in hex is %s\n",hexMac);
 	
 	for(int i=0;i<3;i++){
-		UUIDstr[3*i]=hexMac[2*i+6];
-		UUIDstr[3*i+1]=hexMac[2*i+7];
-		UUIDstr[3*i+2]=':';
+		UUIDstr[2*i]=hexMac[2*i+6];
+		UUIDstr[2*i+1]=hexMac[2*i+7];
 	}
-	UUIDstr[8]='>';
-	UUIDstr[9]='\0';
+	UUIDstr[6]='>';
+	//UUIDstr[7]='\0';
 
 	esp_console_repl_t *repl = NULL;
     esp_console_repl_config_t repl_config = ESP_CONSOLE_REPL_CONFIG_DEFAULT();
@@ -600,13 +424,27 @@ void app_main(void)
 #else
 #error Unsupported console type
 #endif
-
-	
+	//gps defaults
+	// gpsData.latitude=(float)46.77129;
+	// gpsData.longitude=(float)23.6239;
+	// gpsData.fix=GPS_FIX_INVALID;
+	// gpsData.date.year=23;
+	// gpsData.date.month=9;
+	// gpsData.date.day=33;
+	// gpsData.valid=false;
+	ESP_LOGI(gpsTag, "%d/%d/%d %d:%d:%d => \r\n"
+                 "latitude   = %.05f°N\r\n"
+                 "longitude = %.05f°E\r\n"
+                 "altitude   = %.02fm\r\n"
+                 "speed      = %fm/s\n"
+				 "validity=%d fix=%d\n ",
+                 gpsData.date.year + YEAR_BASE, gpsData.date.month, gpsData.date.day,
+                 gpsData.tim.hour + TIME_ZONE, gpsData.tim.minute, gpsData.tim.second,
+                 gpsData.latitude, gpsData.longitude, gpsData.altitude, gpsData.speed,
+				 gpsData.valid, gpsData.fix);
 	
 
 	ESP_ERROR_CHECK(esp_console_start_repl(repl));
-	//nmea_example_init_interface();
-	//xTaskCreate(&gpsTask, "task_gps_nmea_example", 4096, NULL,1, NULL);
 	 /* NMEA parser configuration */
     nmea_parser_config_t config = NMEA_PARSER_CONFIG_DEFAULT();
     /* init NMEA parser library */
