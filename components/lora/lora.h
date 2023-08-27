@@ -13,6 +13,7 @@ enum DIO3modeEnum {DIO3CadDone=0,DIO3ValidHeader=1,DIO3CrcError=2};
 enum DIO4modeEnum {DIO4CadDetected=0,DIO4PllLock=1};
 enum DIO5modeEnum {DIO5ModeReady=0,DIO5ClkOut=1}; 
 
+static uint8_t RxDoneFlag=0;
 
 void lora_reset(void);
 void lora_explicit_header_mode(void);

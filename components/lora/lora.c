@@ -91,7 +91,7 @@
 static spi_device_handle_t __spi;
 static int __implicit;
 static long __frequency;
-static uint8_t RxDoneFlag;
+// static uint8_t RxDoneFlag;
 
 /**
  * Write values to a register in burst mode.max 255 bytes
@@ -207,11 +207,11 @@ void lora_read_reg_burst(uint8_t reg,uint8_t *buffer,uint8_t length)
    return;
 }
 
-static void IRAM_ATTR DIO0_isr_handler(void* arg)
-{
-   RxDoneFlag=1;
-   //printf("\nLoRa DIO0 triggered\n");
-}
+// static void IRAM_ATTR DIO0_isr_handler(void* arg)
+// {
+//    RxDoneFlag=1;
+//    //printf("\nLoRa DIO0 triggered\n");
+// }
 
 void resetRxDone(){
    lora_write_reg(REG_IRQ_FLAGS,IRQ_RX_DONE_MASK);
@@ -490,7 +490,7 @@ lora_init()
    //install gpio isr service
    gpio_install_isr_service(ESP_INTR_FLAG_DEFAULT);
    //hook isr handler for specific gpio pin
-   gpio_isr_handler_add(CONFIG_LORA_DIO0_GPIO, DIO0_isr_handler, (void*) CONFIG_LORA_DIO0_GPIO);
+   // gpio_isr_handler_add(CONFIG_LORA_DIO0_GPIO, DIO0_isr_handler, (void*) CONFIG_LORA_DIO0_GPIO);
     
    /**
     * Configure SPI bus and device

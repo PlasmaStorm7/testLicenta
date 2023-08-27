@@ -43,7 +43,7 @@ static const char* loraTag = "LoRa";
 #define YEAR_BASE (2000) //date in GPS starts from 2000
 nmea_parser_handle_t nmea_hdl;
 gps_t gpsData;
-uint8_t gpsState=1;
+uint8_t gpsState=0;
 #define PROMPT_STR "OGC"
 #define MESSAGE_MAX_LENGTH 255
 #define UUID_LENGTH 7
@@ -85,6 +85,13 @@ static void initialize_nvs(void)
         err = nvs_flash_init();
     }
     ESP_ERROR_CHECK(err);
+}
+
+static void IRAM_ATTR DIO0_isr_handler(void* arg)
+{
+   RxDoneFlag=1;
+   
+   //printf("\nLoRa DIO0 triggered\n");
 }
 
 /**
@@ -218,7 +225,7 @@ esp_err_t esp_console_register_LoRa_send(void){
 }
 
 int RxDoneCheck(int argc, char **argv){
-	int RxDoneFlag=isRxDone();
+	//int RxDoneFlag=isRxDone();
 	ESP_LOGI(loraTag,"RxDoneFlag=%d",RxDoneFlag);
 	ESP_LOGI(loraTag,"ReceiveState=%d",receiveState);
 	return RxDoneFlag;
@@ -323,23 +330,23 @@ void RxTask(void *p){
 			//msgReady=1;
 			if(packetLength>254)
 			packetLength=254;
-			buf[packetLength+1] = 0;//string terminator
+			buf[packetLength] = 0;//string terminator
 			ESP_LOGI(loraTag,"Received:\"%s\" SNR:%.2f RSSI:%d", buf,lora_packet_snr(),lora_packet_rssi());
 			// ESP_LOGI(loraTag,"buf= \"%s\" prevbuf= \"%s\"",buf,prevBuf);
 			if(1 == arraysAreIdentical(buf+UUID_LENGTH,(uint8_t*)UUIDstr,UUID_LENGTH))
 			{
 				ESP_LOGI(loraTag,"Received a message destined for this device\nRelaying a response");
 				lora_send_packet((uint8_t*)response,responseLen);
-			}else if(0 == arraysAreIdentical(buf,prevBuf,packetLength) && buf[6]=='>' && buf[13]=='>'){
+			}else if(0 == arraysAreIdentical(buf,prevBuf,packetLength) && buf[6]=='>'){
 				ESP_LOGI(loraTag,"Relaying  \"%s\" , length %d",buf,packetLength);
 				lora_send_packet(buf,packetLength);
 				memcpy(prevBuf,buf,sizeof(buf));
 			}
 			lora_receive();
 		}
-		vTaskDelay(1000/portTICK_PERIOD_MS);
+		vTaskDelay(100/portTICK_PERIOD_MS);
 	}
-	vTaskDelay(100/portTICK_PERIOD_MS);
+	vTaskDelay(1000/portTICK_PERIOD_MS);
 	}
 	vTaskDelete(NULL);
 }
@@ -364,9 +371,10 @@ void app_main(void)
 	lora_set_spreading_factor(7);
 	// lora_set_sync_word(35);
 	
+	gpio_isr_handler_add(CONFIG_LORA_DIO0_GPIO, DIO0_isr_handler, (void*) CONFIG_LORA_DIO0_GPIO);
 
 	gpio_set_direction(DISP_POWER_PIN,GPIO_MODE_OUTPUT);
-
+	gpio_set_level(DISP_POWER_PIN,1);
 	esp_base_mac_addr_get(baseMac);
 	ESP_LOGI(tag,"MAC address is %02x:%02x:%02x:%02x:%02x:%02x",baseMac[0],baseMac[1],baseMac[2],baseMac[3],baseMac[4],baseMac[5]); 
 	char hexMac[sizeof(baseMac)*2 + 1];
@@ -444,7 +452,7 @@ void app_main(void)
 				 gpsData.valid, gpsData.fix);
 	
 
-	ESP_ERROR_CHECK(esp_console_start_repl(repl));
+	
 	 /* NMEA parser configuration */
     nmea_parser_config_t config = NMEA_PARSER_CONFIG_DEFAULT();
     /* init NMEA parser library */
@@ -454,6 +462,7 @@ void app_main(void)
     	nmea_parser_add_handler(nmea_hdl, gps_event_handler, NULL);
 	}
 	xTaskCreate(&RxTask, "task_rx", 4096, NULL,2, NULL);
+	ESP_ERROR_CHECK(esp_console_start_repl(repl));
     // xTaskCreate(&gpsTask,"GPS Task",2048,NULL,2,NULL);
 	//xTaskCreate(&consoleTask,"Console Task",2048,repl,2,NULL);
 	
