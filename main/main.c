@@ -39,13 +39,15 @@ static const char* tag = "OGC";
 static const char* gpsTag = "GPS";
 static const char* loraTag = "LoRa";
 
+static TaskHandle_t rxTaskHandle = NULL;
+
 #define TIME_ZONE (+3)   //EEST
 #define YEAR_BASE (2000) //date in GPS starts from 2000
 nmea_parser_handle_t nmea_hdl;
 gps_t gpsData;
 uint8_t gpsState=0;
 #define PROMPT_STR "OGC"
-#define MESSAGE_MAX_LENGTH 255
+#define MESSAGE_MAX_LENGTH 63
 #define UUID_LENGTH 7
 uint8_t buf[MESSAGE_MAX_LENGTH]={"salut\0"};
 uint8_t prevBuf[MESSAGE_MAX_LENGTH]={0};
@@ -90,7 +92,8 @@ static void initialize_nvs(void)
 static void IRAM_ATTR DIO0_isr_handler(void* arg)
 {
    RxDoneFlag=1;
-   
+   xTaskNotifyFromISR(rxTaskHandle,0,eNoAction,NULL);
+
    //printf("\nLoRa DIO0 triggered\n");
 }
 
@@ -186,9 +189,10 @@ void loraTransmitMessage(char* message){
 	}
 	
 	lora_send_packet((uint8_t*) message,len);
+	lora_receive();
 	ESP_LOGI(loraTag,"message %s sent",message);
 	memcpy(prevBuf,message,len);
-	lora_receive();
+	
 	receiveState=1;
 }
 
@@ -198,7 +202,7 @@ int LoRa_send(int argc, char **argv){
 	strncat(message,UUIDstr,UUID_LENGTH);
 	//ESP_LOGI("tag","UUIDstr copied into message=%s",message);
 	strncat(message,argv[1],UUID_LENGTH);
-	strncat(message,argv[2],255-(2*UUID_LENGTH));
+	strncat(message,argv[2],MESSAGE_MAX_LENGTH-(2*UUID_LENGTH));
 	loraTransmitMessage(message);
 	ESP_LOGI(gpsTag, "%d/%d/%d %d:%d:%d => \r\n"
                  "latitude   = %.05f°N\r\n"
@@ -308,6 +312,7 @@ esp_err_t register_GPS_SetGpsState(){
 
 void RxTask(void *p){
 	int packetLength;
+	uint32_t intrStatus;
 	char* responseText="Received your message";
 	uint8_t responseLen=strlen(responseText);
 	char response[responseLen+UUID_LENGTH];
@@ -317,9 +322,10 @@ void RxTask(void *p){
 	lora_receive();   
 	for(;;) {
 	while(1==receiveState){
-		
+		xTaskNotifyWait(0,ULONG_MAX,&intrStatus,portMAX_DELAY);
 	//ESP_LOGI(loraTag,"checking for LoRa packet");
-		while(isRxDone()) {
+		//while(isRxDone()) {
+			//ESP_LOGI(loraTag,"got an interrupt");
 			packetLength = lora_receive_packet(buf, sizeof(buf));
 			resetRxDone();
 			if(packetLength==0){
@@ -328,14 +334,15 @@ void RxTask(void *p){
 				break;
 			}
 			//msgReady=1;
-			if(packetLength>254)
-			packetLength=254;
+			if(packetLength>MESSAGE_MAX_LENGTH)
+			packetLength=MESSAGE_MAX_LENGTH;
 			buf[packetLength] = 0;//string terminator
 			ESP_LOGI(loraTag,"Received:\"%s\" SNR:%.2f RSSI:%d", buf,lora_packet_snr(),lora_packet_rssi());
 			// ESP_LOGI(loraTag,"buf= \"%s\" prevbuf= \"%s\"",buf,prevBuf);
+			vTaskDelay(pdMS_TO_TICKS(10));
 			if(1 == arraysAreIdentical(buf+UUID_LENGTH,(uint8_t*)UUIDstr,UUID_LENGTH))
 			{
-				ESP_LOGI(loraTag,"Received a message destined for this device\nRelaying a response");
+				ESP_LOGI(loraTag,"Received a message destined for this device, Relaying a response");
 				lora_send_packet((uint8_t*)response,responseLen);
 			}else if(0 == arraysAreIdentical(buf,prevBuf,packetLength) && buf[6]=='>'){
 				ESP_LOGI(loraTag,"Relaying  \"%s\" , length %d",buf,packetLength);
@@ -343,8 +350,8 @@ void RxTask(void *p){
 				memcpy(prevBuf,buf,sizeof(buf));
 			}
 			lora_receive();
-		}
-		vTaskDelay(100/portTICK_PERIOD_MS);
+		//}
+		//vTaskDelay(100/portTICK_PERIOD_MS);
 	}
 	vTaskDelay(1000/portTICK_PERIOD_MS);
 	}
@@ -369,7 +376,7 @@ void app_main(void)
 	lora_set_tx_power(17);//ONLY USE 17 IF IN THE 868.525 BAND!!! 14 otherwise
 	lora_enable_crc();
 	lora_set_spreading_factor(7);
-	// lora_set_sync_word(35);
+	lora_set_sync_word(35);
 	
 	gpio_isr_handler_add(CONFIG_LORA_DIO0_GPIO, DIO0_isr_handler, (void*) CONFIG_LORA_DIO0_GPIO);
 
@@ -461,7 +468,7 @@ void app_main(void)
 	if(1==gpsState){
     	nmea_parser_add_handler(nmea_hdl, gps_event_handler, NULL);
 	}
-	xTaskCreate(&RxTask, "task_rx", 4096, NULL,2, NULL);
+	xTaskCreate(&RxTask, "task_rx", 4096, NULL,1, &rxTaskHandle);
 	ESP_ERROR_CHECK(esp_console_start_repl(repl));
     // xTaskCreate(&gpsTask,"GPS Task",2048,NULL,2,NULL);
 	//xTaskCreate(&consoleTask,"Console Task",2048,repl,2,NULL);

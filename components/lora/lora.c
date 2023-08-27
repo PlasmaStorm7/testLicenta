@@ -117,6 +117,7 @@ void lora_write_reg_burst(uint8_t reg,uint8_t *buffer,uint8_t length){
    spi_transaction_t t = {
       .flags = 0,
       .length = 8 * (length+1),
+      // .length = 8 * (length+1),
       .tx_buffer = out,
       .rx_buffer = in  
    };
