@@ -15,7 +15,8 @@
     "gpio_struct.h": "c",
     "gpio.h": "c",
     "system_error": "c",
-    "nmea.h": "c"
+    "nmea.h": "c",
+    "lora.h": "c"
   },
   "cmake.configureOnOpen": true
 }

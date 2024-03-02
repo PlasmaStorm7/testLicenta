@@ -550,7 +550,7 @@ lora_init()
    lora_write_reg(REG_FIFO_TX_BASE_ADDR, 0);
    lora_write_reg(REG_LNA, lora_read_reg(REG_LNA) | 0x03);
    lora_write_reg(REG_MODEM_CONFIG_3, 0x04);
-   lora_set_tx_power(14);
+   lora_set_tx_power(17);
    setDIO(DIO0RxDone,DIO1RxTimeout,DIO2Fhss,DIO3ValidHeader,DIO4CadDetected,DIO5ModeReady);
    lora_idle();
    return version;
